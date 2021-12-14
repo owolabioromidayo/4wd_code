@@ -7,4 +7,6 @@ cd ~
 git clone https://github.com/Freenove/Freenove_RPI_WS281x_Python.git
 cd ~/Freenove_RPI_WS281x_Python
 sudo python setup.py install
+#flask
+pip install flask
 echo "The installation is complete!"
