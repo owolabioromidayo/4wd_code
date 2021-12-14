@@ -6,9 +6,6 @@ import cv2, time
 app = Flask(__name__)
 
 
-camera = PiCamera()
-rawCapture = PiRGBArray(camera)
-time.sleep(0.1)
 
 
 @app.route('/')
@@ -18,8 +15,12 @@ def index():
 
 def generate_img():
     try:
+        camera = PiCamera()
+        rawCapture = PiRGBArray(camera)
+        time.sleep(0.1)
         camera.capture(rawCapture, format="bgr")
         image = rawCapture.array
+        camera.close()
         yield(b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + image + b'\r\n')
     except Exception as e:
         print("Error: No Image")
