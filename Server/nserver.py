@@ -1,4 +1,4 @@
-from flask import Flask, Response
+from flask import Flask, Response, render_template
 import picamera, io
 
 app = Flask(__name__)
@@ -8,6 +8,13 @@ im_width = 1280
 im_height = 720
 camera = picamera.PiCamera(resolution=(im_width, im_height), framerate = 60 )
 stream = io.Bytes
+
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
 
 
 def generate_img():
