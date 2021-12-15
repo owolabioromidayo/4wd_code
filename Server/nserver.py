@@ -1,7 +1,6 @@
 from flask import Flask, Response, render_template, request
-from picamera.array import PiRGBArray
-from picamera import PiCamera
-import cv2, time, socket, os
+from camera import VideoCamera
+import cv2, time, socket, os, threading
 
 from Motor import Motor
 from ADC import Adc
@@ -9,8 +8,9 @@ from servo import Servo
 from Ultrasonic import Ultrasonic
 from Buzzer import Buzzer
 
-app = Flask(__name__)
 
+pi_camera = VideoCamera(flip=False)
+app = Flask(__name__)
 
 PWM = Motor()
 adc = Adc()
@@ -18,34 +18,25 @@ pwm = Servo()
 _ultrasonic = Ultrasonic()
 _buzzer = Buzzer()
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-
 def get_local_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(('8.8.8.8', 80))
     return s.getsockname()[0]
 
+@app.route('/')
+def index():
+    return render_template('index.html') 
 
-def generate_img():
-    try:
-        camera = PiCamera(resolution=(1280,720), framerate = 60)
-        rawCapture = PiRGBArray(camera)
-        time.sleep(0.1)
-        camera.capture(rawCapture, format="bgr")
-        image = rawCapture.array
-        camera.close()
-        yield(b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + image + b'\r\n')
-    except Exception as e:
-        print("Error: No Image")
-        return
-    
+def gen(camera):
+    while True:
+        frame = camera.get_frame()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
-@app.route('/get_img')
-def get_img():
-    return Response(generate_img(), mimetype='multipart/x-mixed-replace; boundary=frame')
+@app.route('/video_feed')
+def video_feed():
+    return Response(gen(pi_camera),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 @app.route('/test', methods=['POST'])
@@ -136,6 +127,5 @@ def buzzer():
     return "Done"
 
 
-
-if __name__ == "__main__":
-    app.run(host=get_local_ip(), port=8000, debug=True)
+if __name__ == '__main__':
+    app.run(host=get_local_ip(), debug=False)
