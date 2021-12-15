@@ -46,6 +46,7 @@ class Motor:
         else:
             self.pwm.setMotorPwm(2,4095)
             self.pwm.setMotorPwm(3,4095)
+            
     def right_Upper_Wheel(self,duty):
         if duty>0:
             self.pwm.setMotorPwm(6,0)
@@ -56,6 +57,7 @@ class Motor:
         else:
             self.pwm.setMotorPwm(6,4095)
             self.pwm.setMotorPwm(7,4095)
+
     def right_Lower_Wheel(self,duty):
         if duty>0:
             self.pwm.setMotorPwm(4,0)
@@ -74,8 +76,25 @@ class Motor:
         self.left_Lower_Wheel(duty2)
         self.right_Upper_Wheel(duty3)
         self.right_Lower_Wheel(duty4)
+
+
+    def goForward(self):
+        self.setMotorModel(2000,2000,2000,2000)      
+
+    def goBackwards(self):
+        self.setMotorModel(-2000,-2000,-2000,-2000)      
             
+    def goLeft(self):
+        self.setMotorModel(-500,-500,2000,2000)      
             
+    def goRight(self):
+        self.setMotorModel(2000,2000,-500,-500)  
+
+    def stop(self):
+        self.setMotorModel(0,0,0,0)    
+
+
+
 PWM=Motor()          
 def loop(): 
     PWM.setMotorModel(2000,2000,2000,2000)       #Forward

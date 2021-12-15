@@ -6,6 +6,10 @@ class Servo:
         self.PwmServo.setPWMFreq(50)
         self.PwmServo.setServoPulse(8,1500)
         self.PwmServo.setServoPulse(9,1500)
+
+        self.horiz_ang = 90
+        self.vert_ang = 90
+
     def setServoPwm(self,channel,angle,error=10):
         angle=int(angle)
         if channel=='0':
@@ -25,6 +29,28 @@ class Servo:
         elif channel=='7':
             self.PwmServo.setServoPulse(15,500+int((angle+error)/0.09))
 
+    def home(self):
+        self.horiz_ang = 90
+        self.vert_ang = 90
+        self.setServoPwm('0',self.horiz_ang)
+        self.setServoPwm('1',self.vert_ang)
+
+    def nudgeHoriz(self, val):
+        if  50 <= self.horiz_ang + val <= 110:    
+            self.horiz_ang += val
+            self.setServoPwm('0', self.horiz_ang)
+        else:
+            print("Out of steering range")
+        
+
+    def nudgeVert(self, val):
+        if 80 <= self.vert_ang + val <= 150:
+            self.vert_ang += val
+            self.setServoPwm('1', self.vert_ang)
+        else:
+            print("Out of steering range")
+    
+        
 # Main program logic follows:
 if __name__ == '__main__':
     print("Now servos will rotate to 90°.") 
