@@ -65,73 +65,10 @@
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->
 
-    <script type="text/javascript">
-      // test endpoints
-      $("#testLEDs").click(function(){
-        $.post("/test", {arg: "Led"})
-      })
-      $("#testMotors").click(function(){
-        $.post("/test", {arg: "Motor"})
-      })
-      $("#testUltrasonic").click(function(){
-        $.post("/test", {arg: "Ultrasonic"})
-      })
-      $("#testInfrared").click(function(){
-        $.post("/test", {arg: "Infrared"})
-      })
-      $("#testServo").click(function(){
-        $.post("/test", {arg: "Servo"})
-      })
-      $("#testADC").click(function(){
-        $.post("/test", {arg: "ADC"})
-      })
-      $("#testBuzzer").click(function(){
-        $.post("/test", {arg: "Buzzer"})
-      })
-
-      $("#toggle-video").click(function(){
-        var imgDiv = $('.panel-1-left');
-         if (imgDiv.style.display !== 'none') {
-            imgDiv.style.display = 'none';
-        }
-        else {
-            imgDiv.style.display = 'block';
-        }
-
-      })
-
-      $('#motor-forward-btn').click(function(){
-        $.post('/move', {arg:"FORWARD"})
-      })
-      $('#motor-backwards-btn').click(function(){
-        $.post('/move', {arg:"BACKWARDS"})
-      })
-      $('#motor-left-btn').click(function(){
-        $.post('/move', {arg:"LEFT"})
-      })
-      $('#motor-right-btn').click(function(){
-        $.post('/move', {arg:"RIGHT"})
-      })
-      $('#motor-stop-btn').click(function(){
-        $.post('/move', {arg:"STOP"})
-      })
+    <script type="text/javascript" src="{{url_for('static', filename='index.js')}}">
 
 
-      $('#servo-up-btn').click(function(){
-        $.post('/servo', {arg:"UP"})
-      })
-      $('#servo-down-btn').click(function(){
-        $.post('/servo', {arg:"DOWN"})
-      })
-      $('#servo-left-btn').click(function(){
-        $.post('/servo', {arg:"LEFT"})
-      })
-      $('#servo-right-btn').click(function(){
-        $.post('/servo', {arg:"RIGHT"})
-      })
-      $('#servo-home-btn').click(function(){
-        $.post('/servo', {arg:"HOME"})
-      })
+
     </script>
 
   </body>

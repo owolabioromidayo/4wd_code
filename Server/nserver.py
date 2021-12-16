@@ -92,7 +92,8 @@ def servo():
         'RIGHT' : lambda: pwm.nudgeHoriz(5), 
         'UP' :    lambda: pwm.nudgeVert(5), 
         'DOWN' :  lambda: pwm.nudgeVert(-5), 
-        'HOME' :  pwm.home
+        'HOME' :  pwm.home,
+        
     }
     arg = request.form['arg']
     print(f"Moving : {arg}")
