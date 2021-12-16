@@ -1,13 +1,14 @@
 from flask import Flask, Response, render_template, request
 from camera import VideoCamera
-import cv2, time, socket, os, threading
+import time, socket, os, threading
 
 from Motor import Motor
 from ADC import Adc
 from servo import Servo
 from Ultrasonic import Ultrasonic
 from Buzzer import Buzzer
-
+from Line_Tracking import Line_Tracking
+from line_following import Follower
 
 pi_camera = VideoCamera(flip=False)
 app = Flask(__name__)
@@ -18,10 +19,31 @@ pwm = Servo()
 _ultrasonic = Ultrasonic()
 _buzzer = Buzzer()
 
+
+exit_handler = threading.Event()
+
+threads = {}
+thread_states = {
+    "line_tracking_is_active" : False,
+    "line_following_is_active" : False
+}
+
 def get_local_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(('8.8.8.8', 80))
     return s.getsockname()[0]
+
+
+def exec_line_tracking():
+    # follow black lines
+    infrared = Line_Tracking()
+    infrared.run_thread(exit_handler)
+
+def exec_line_following():
+    #follow yellow line
+    follower = Follower()
+    follower.run_thread(exit_handler)
+
 
 @app.route('/')
 def index():
@@ -126,6 +148,51 @@ def buzzer():
     _buzzer.run('0')
 
     return "Done"
+
+@app.route('/line_tracking', methods=['POST'])
+def line_tracking():
+    arg = request.form['arg']
+    if arg == 'START':
+        if not thread_states["line_tracking_is_active"]:
+            thread_states["line_tracking_is_active"] = True
+
+            threads["line_tracking"] = threading.Thread(target=exec_line_tracking)
+            threads['line_tracking'].start()
+            threads['line_tracking'].join()
+        else:
+            print("already active")
+            return "Error: service already running"
+    elif arg == 'STOP':
+        exit_handler.set()
+        thread_states['line_tracking_is_active'] = False
+    
+    else:
+        print(f"Error: Argument: {arg} does not exist")
+        return f"Error: Argument: {arg} does not exist"
+        
+
+
+@app.route('/line_following', methods=['POST'])
+def line_following():
+    arg = request.form['arg']
+    if arg == 'START':
+        if not thread_states["line_following_is_active"]:
+            thread_states["line_following_is_active"] = True
+
+            threads["line_following"] = threading.Thread(target=exec_line_following)
+            threads['line_following'].start()
+            threads['line_following'].join()
+        else:
+            print("already active")
+            return "Error: service already running"
+    elif arg == 'STOP':
+        exit_handler.set()
+        thread_states['line_following_is_active'] = False
+    
+    else:
+        print(f"Error: Argument: {arg} does not exist")
+        return f"Error: Argument: {arg} does not exist"
+        
 
 
 if __name__ == '__main__':

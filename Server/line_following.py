@@ -45,6 +45,23 @@ class Follower:
                 print ("End transmit ... " )
                 break
 
+    def run_thread(self, exit_handler):
+
+          for _ in self.camera.capture_continuous(self.stream, 'jpeg', use_video_port = True):
+            if exit_handler.is_set():
+                return
+            try:
+                self.stream.seek(0)
+                image = cv2.imdecode(np.frombuffer(self.stream.read(), np.uint8), 1)
+                self.process_img(image)
+
+                self.stream.seek(0)
+                self.stream.truncate()
+
+            except Exception as e:
+                print(e)
+                print ("End transmit ... " )
+                break
 
         # while True:
         #     self.camera.capture('/home/pi/curr.jpg')
