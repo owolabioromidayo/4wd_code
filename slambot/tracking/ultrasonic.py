@@ -1,38 +1,11 @@
-import time
-from Motor import *
-import RPi.GPIO as GPIO
-from servo import *
-from PCA9685 import PCA9685
-class Ultrasonic:
-    def __init__(self):
-        GPIO.setwarnings(False)
-        self.trigger_pin = 27
-        self.echo_pin = 22
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.trigger_pin,GPIO.OUT)
-        GPIO.setup(self.echo_pin,GPIO.IN)
-    def send_trigger_pulse(self):
-        GPIO.output(self.trigger_pin,True)
-        time.sleep(0.00015)
-        GPIO.output(self.trigger_pin,False)
+from slambot.sensors.ultrasonic import Ultrasonic
 
-    def wait_for_echo(self,value,timeout):
-        count = timeout
-        while GPIO.input(self.echo_pin) != value and count>0:
-            count = count-1
-     
-    def get_distance(self):
-        distance_cm=[0,0,0,0,0]
-        for i in range(3):
-            self.send_trigger_pulse()
-            self.wait_for_echo(True,10000)
-            start = time.time()
-            self.wait_for_echo(False,10000)
-            finish = time.time()
-            pulse_len = finish-start
-            distance_cm[i] = pulse_len/0.000058
-        distance_cm=sorted(distance_cm)
-        return int(distance_cm[2])
+
+class UltrasonicTracking:
+    def __init__(self, mode):
+        if self.mode != "emulate":
+            pass
+
     def run_motor(self,L,M,R):
         if (L < 30 and M < 30 and R <30) or M < 30 :
             self.PWM.setMotorModel(-1450,-1450,-1450,-1450) 
@@ -55,7 +28,8 @@ class Ultrasonic:
                 PWM.setMotorModel(-1500,-1500,1500,1500)
         else :
             self.PWM.setMotorModel(600,600,600,600)
-                
+
+
     def run(self):
         self.PWM=Motor()
         self.pwm_S=Servo()
@@ -92,13 +66,12 @@ class Ultrasonic:
         
             
         
-ultrasonic=Ultrasonic()              
+   
 # Main program logic follows:
 if __name__ == '__main__':
-    print ('Program is starting ... ')
+    ultrasonic=Ultrasonic()           
     try:
         ultrasonic.run()
     except KeyboardInterrupt:  # When 'Ctrl+C' is pressed, the child program destroy() will be  executed.
         PWM.setMotorModel(0,0,0,0)
         ultrasonic.pwm_S.setServoPwm('0',90)
-

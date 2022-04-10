@@ -1,29 +1,22 @@
 import time
-from PCA9685 import PCA9685
+from slambot.sensors.PCA9685 import PCA9685
 class Motor:
-    def __init__(self):
-        self.pwm = PCA9685(0x40, debug=True)
+    def __init__(self, mode=""):
+        self.mode = mode
+        if self.mode == "emulate":
+            print(f"{self.__class__.__name__} running in emulation mode.") 
+            self.pwm = PCA9685(0x40, debug=True, mode="emulate")
+        else:
+            self.pwm = PCA9685(0x40, debug=True)
+
         self.pwm.setPWMFreq(50)
+
     def duty_range(self,duty1,duty2,duty3,duty4):
-        if duty1>4095:
-            duty1=4095
-        elif duty1<-4095:
-            duty1=-4095        
-        
-        if duty2>4095:
-            duty2=4095
-        elif duty2<-4095:
-            duty2=-4095
-            
-        if duty3>4095:
-            duty3=4095
-        elif duty3<-4095:
-            duty3=-4095
-            
-        if duty4>4095:
-            duty4=4095
-        elif duty4<-4095:
-            duty4=-4095
+        duty1 = min(max(-4095, duty1), 4095)
+        duty2 = min(max(-4095, duty2), 4095)
+        duty3 = min(max(-4095, duty3), 4095)
+        duty4 = min(max(-4095, duty4), 4095)
+
         return duty1,duty2,duty3,duty4
         
     def left_Upper_Wheel(self,duty):
@@ -36,6 +29,7 @@ class Motor:
         else:
             self.pwm.setMotorPwm(0,4095)
             self.pwm.setMotorPwm(1,4095)
+
     def left_Lower_Wheel(self,duty):
         if duty>0:
             self.pwm.setMotorPwm(3,0)
@@ -79,38 +73,23 @@ class Motor:
 
 
     def goForward(self):
+        print("Going forward.")
         self.setMotorModel(2000,2000,2000,2000)      
 
     def goBackwards(self):
+        print("Going backwards.")
         self.setMotorModel(-2000,-2000,-2000,-2000)      
             
     def goLeft(self):
+        print("Going left.")
         self.setMotorModel(-500,-500,2000,2000)      
             
     def goRight(self):
+        print("Going right.")
         self.setMotorModel(2000,2000,-500,-500)  
 
     def stop(self):
+        print("Stopping wheel motors.")
         self.setMotorModel(0,0,0,0)    
 
 
-
-PWM=Motor()          
-def loop(): 
-    PWM.setMotorModel(2000,2000,2000,2000)       #Forward
-    time.sleep(3)
-    PWM.setMotorModel(-2000,-2000,-2000,-2000)   #Back
-    time.sleep(3)
-    PWM.setMotorModel(-500,-500,2000,2000)       #Left 
-    time.sleep(3)
-    PWM.setMotorModel(2000,2000,-500,-500)       #Right    
-    time.sleep(3)
-    PWM.setMotorModel(0,0,0,0)                   #Stop
-    
-def destroy():
-    PWM.setMotorModel(0,0,0,0)                   
-if __name__=='__main__':
-    try:
-        loop()
-    except KeyboardInterrupt:  # When 'Ctrl+C' is pressed, the child program destroy() will be  executed.
-        destroy()

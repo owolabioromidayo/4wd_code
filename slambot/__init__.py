@@ -1,0 +1,1 @@
+import slambot.tests.emulation
