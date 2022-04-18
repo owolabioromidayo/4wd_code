@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-import cv2, picamera, time, io
+
+import cv2, time, io, picamera
 import numpy as np
-from Motor import *
+from slambot.actuators.motor import Motor
 
 
 class Follower:
@@ -29,7 +30,8 @@ class Follower:
 
     
         self.run()
-            
+
+
     def run(self):
           for _ in self.camera.capture_continuous(self.stream, 'jpeg', use_video_port = True):
             try:
@@ -45,8 +47,8 @@ class Follower:
                 print ("End transmit ... " )
                 break
 
-    def run_thread(self, exit_handler):
 
+    def run_thread(self, exit_handler):
           for _ in self.camera.capture_continuous(self.stream, 'jpeg', use_video_port = True):
             if exit_handler.is_set():
                 return
@@ -63,16 +65,6 @@ class Follower:
                 print ("End transmit ... " )
                 break
 
-        # while True:
-        #     self.camera.capture('/home/pi/curr.jpg')
-
-        #     rgb, hsv, masked  = self.process_img(data)
-        #     cv2.imshow("rgb", rgb)
-        #     cv2.imshow("hsv", hsv)
-        #     cv2.imshow("masked", masked)
-        #     cv2.waitKey(3)
-
-        #     time.sleep(0.5)
 
     def process_img(self, image):
         #color filtering
@@ -82,7 +74,6 @@ class Follower:
         upper_yellow = np.array([120, 255, 255])
         mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
         #masked = cv2.bitwise_and(image, image, mask=mask)
-
 
         #computing moments
         h,w,d = image.shape
@@ -99,23 +90,19 @@ class Follower:
 
 
             #follow the dot/ publish to cmd_vel
-            motor_duties = [-1000,-1000,-1000,-1000]
-            
-        
             print(f"CX: {cx}")
 
             if self.left_thresh<cx<self.right_thresh:
                 print('GOING STRAIGHT')
+                self.PWM.goForward()
 
             elif cx <= self.left_thresh:
                 print('GOING LEFT')
-                #motor_duties = list(map(lambda x: min(int(x*scale), 1) ,[-500, -500, 2000, 2000]))
-                motor_duties = [-500, -500, -2000,-2000 ]
+                self.PWM.goLeft()
 
             else:
                 print('GOING RIGHT')
-                #motor_duties = list(map(lambda x: min(int(x*scale), 1) ,[2000, 2000, -500, -500]))
-                motor_duties = [-2000,-2000,-500,-500]
+                self.PWM.goRight()
 
             self.PWM.setMotorModel(*motor_duties)
             print(motor_duties)
@@ -124,11 +111,5 @@ class Follower:
         #cv2.imshow("hsv", hsv)
         #cv2.imshow("masked", masked)
         cv2.waitKey(3)
-
-        #time.sleep(0.5)
-
         return 
 
-
-if __name__ == "__main__":
-    follower = Follower()

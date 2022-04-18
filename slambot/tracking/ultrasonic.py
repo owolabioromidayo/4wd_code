@@ -63,7 +63,6 @@ class UltrasonicTracking:
                 else:
                     R = self.get_distance()
                 self.run_motor(L,M,R)
-        
             
         
    

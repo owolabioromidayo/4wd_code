@@ -1,6 +1,7 @@
 import time
-from Motor import *
+from slambot.actuators.motor import Motor
 import RPi.GPIO as GPIO
+
 class Line_Tracking:
     def __init__(self):
         self.IR01 = 14
@@ -34,8 +35,7 @@ class Line_Tracking:
                 PWM.setMotorModel(0,0,0,0)
 
 
-    def run_thread(self, exit_handler):
-        
+    def run_thread(self, exit_handler):        
         while True:
             if exit_handler.is_set():
                 return
@@ -60,12 +60,3 @@ class Line_Tracking:
                 #pass
                 PWM.setMotorModel(0,0,0,0)
             
-
-infrared=Line_Tracking()
-# Main program logic follows:
-if __name__ == '__main__':
-    print ('Program is starting ... ')
-    try:
-        infrared.run()
-    except KeyboardInterrupt:  # When 'Ctrl+C' is pressed, the child program  will be  executed.
-        PWM.setMotorModel(0,0,0,0)

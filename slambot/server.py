@@ -2,19 +2,19 @@ from flask import Flask, Response, render_template, request
 from camera import VideoCamera
 import time, socket, os, threading
 
-from Motor import Motor
-from ADC import Adc
-from servo import Servo
-from Ultrasonic import Ultrasonic
-from Buzzer import Buzzer
-from Line_Tracking import Line_Tracking
-from line_following import Follower
+from slambot.actuators.motor import Motor
+from slambot.sensors.ADC import ADC
+from slambot.actuators.servo import Servo
+from slambot.sensors.ultrasonic import Ultrasonic
+from slambot.actuators.buzzer import Buzzer
+from slambot.tracking.infrared import Line_Tracking
+from slambot.tracking.line import Follower
 
 pi_camera = VideoCamera(flip=False)
 app = Flask(__name__)
 
 PWM = Motor()
-adc = Adc()
+adc = ADC()
 pwm = Servo()
 _ultrasonic = Ultrasonic()
 _buzzer = Buzzer()

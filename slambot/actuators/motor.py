@@ -74,19 +74,19 @@ class Motor:
 
     def goForward(self):
         print("Going forward.")
-        self.setMotorModel(2000,2000,2000,2000)      
+        self.setMotorModel(600,600,600,600)      
 
     def goBackwards(self):
         print("Going backwards.")
-        self.setMotorModel(-2000,-2000,-2000,-2000)      
+        self.setMotorModel(-600,-600,-600,-600)      
             
     def goLeft(self):
         print("Going left.")
-        self.setMotorModel(-500,-500,2000,2000)      
+        self.setMotorModel(-1200,-1200,1400,1400)      
             
     def goRight(self):
         print("Going right.")
-        self.setMotorModel(2000,2000,-500,-500)  
+        self.setMotorModel(1400,1400,-1200,-1200)  
 
     def stop(self):
         print("Stopping wheel motors.")

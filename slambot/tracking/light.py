@@ -1,37 +1,26 @@
 import time
-from Motor import *
-from ADC import *
+from slambot.actuators.motor import Motor
+from slambot.sensors.adc import ADC
+
 class Light:
     def run(self):
         try:
-            self.adc=Adc()
+            self.adc=ADC()
             self.PWM=Motor()
             self.PWM.setMotorModel(0,0,0,0)
             while True:
                 L = self.adc.recvADC(0)
                 R = self.adc.recvADC(1)
                 if L < 2.99 and R < 2.99 :
-                    self.PWM.setMotorModel(600,600,600,600)
-                    
+                    self.PW<.goForwards()
+
                 elif abs(L-R)<0.15:
-                    self.PWM.setMotorModel(0,0,0,0)
+                    self.PWM.stop()
                     
                 elif L > 3 or R > 3:
                     if L > R :
-                        self.PWM.setMotorModel(-1200,-1200,1400,1400)
+                        self.PWM.goLeft()
                         
                     elif R > L :
-                        self.PWM.setMotorModel(1400,1400,-1200,-1200)
-                    
-        except KeyboardInterrupt:
-           led_Car.PWM.setMotorModel(0,0,0,0) 
-
-if __name__=='__main__':
-    print ('Program is starting ... ')
-    led_Car=Light()
-    led_Car.run()
-
-
-        
-    
+                        self.PWM.goRight()
 

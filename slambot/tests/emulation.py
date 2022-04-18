@@ -1,15 +1,12 @@
 import sys, os, time
-# sys.path.append(os.path.abspath(os.path.join('..', 'sensors')))
 
 from slambot.sensors.adc import ADC
 from slambot.sensors.buzzer import Buzzer
-from slambot.sensors.motor import Motor
-from slambot.sensors.servo import Servo
 from slambot.sensors.ultrasonic import Ultrasonic
 from slambot.sensors.led import LED
 
-from slambot.tracking.ultrasonic import UltrasonicTracking
-
+from slambot.actuators.motor import Motor
+from slambot.actuators.servo import Servo
 
 class TestEmulation:
     def __init__(self):
