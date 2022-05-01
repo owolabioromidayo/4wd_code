@@ -27,43 +27,36 @@ class Follower:
 
         self.PWM = Motor()
         print("MOtor: CONNECTED...")
-
     
         self.run()
 
 
+    def loop(self):
+        try:
+            self.stream.seek(0)
+            image = cv2.imdecode(np.frombuffer(self.stream.read(), np.uint8), 1)
+            self.process_img(image)
+
+            self.stream.seek(0)
+            self.stream.truncate()
+
+        except Exception as e:
+            print(e)
+            print ("End transmit ... " )
+            break
+
+
     def run(self):
           for _ in self.camera.capture_continuous(self.stream, 'jpeg', use_video_port = True):
-            try:
-                self.stream.seek(0)
-                image = cv2.imdecode(np.frombuffer(self.stream.read(), np.uint8), 1)
-                self.process_img(image)
-
-                self.stream.seek(0)
-                self.stream.truncate()
-
-            except Exception as e:
-                print(e)
-                print ("End transmit ... " )
-                break
+            self.loop()
 
 
     def run_thread(self, exit_handler):
           for _ in self.camera.capture_continuous(self.stream, 'jpeg', use_video_port = True):
             if exit_handler.is_set():
                 return
-            try:
-                self.stream.seek(0)
-                image = cv2.imdecode(np.frombuffer(self.stream.read(), np.uint8), 1)
-                self.process_img(image)
-
-                self.stream.seek(0)
-                self.stream.truncate()
-
-            except Exception as e:
-                print(e)
-                print ("End transmit ... " )
-                break
+            self.loop()
+            
 
 
     def process_img(self, image):
@@ -87,7 +80,6 @@ class Follower:
             cx = int (M['m10']/ M['m00'])
             cy = int (M['m01']/ M['m00'])
             cv2.circle(rgb, (cx,cy), 20, (0,255,255), -1)
-
 
             #follow the dot/ publish to cmd_vel
             print(f"CX: {cx}")

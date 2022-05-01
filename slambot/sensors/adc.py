@@ -68,17 +68,6 @@ class ADC:
 
     def i2cClose(self):
         self.bus.close()
-
-def loop():
-    adc=ADC()
-    while True:
-        Left_IDR=adc.recvADC(0)
-        print (Left_IDR)
-        Right_IDR=adc.recvADC(1)
-        print (Right_IDR)
-        Power=adc.recvADC(2)*3
-        print (Power)
-        time.sleep(1)
-        print ('----')
+        
 
 
