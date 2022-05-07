@@ -1,5 +1,5 @@
 from flask import Flask, Response, render_template, request
-from camera import VideoCamera
+from slambot.camera import VideoCamera
 import time, socket, os, threading
 
 from slambot.actuators.motor import Motor
@@ -9,6 +9,8 @@ from slambot.sensors.ultrasonic import Ultrasonic
 from slambot.actuators.buzzer import Buzzer
 from slambot.tracking.infrared import Line_Tracking
 from slambot.tracking.line import Follower
+
+from slambot.test.physical import TestPhy
 
 pi_camera = VideoCamera(flip=False)
 app = Flask(__name__)
@@ -27,6 +29,8 @@ thread_states = {
     "line_tracking_is_active" : False,
     "line_following_is_active" : False
 }
+
+test = TestPhy()
 
 def get_local_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -63,25 +67,25 @@ def video_feed():
 
 @app.route('/test', methods=['POST'])
 def test():
-    args = [
-        'Led',
-        'Motor',
-        'Ultrasonic',
-        'Infrared',
-        'Servo',
-        'ADC',
-        'Buzzer'
-    ]
+    args = {
+        'Led':test.test_led,
+        'Motor': test.test_motors,
+        'Ultrasonic': test.test_ultrasonic,
+        'Infrared': test.test_line_tracking,
+        'Servo': test.test_servos,
+        'ADC': tesst.test_adc,
+        'Buzzer': test.test_buzzer
+    }
     arg = request.form['arg']
     print(f"Testing {arg}")
 
     if arg == "ALL":
-        for _arg in args:
+        for k,v in args:
             print(f"Testing {arg}")
-            os.system(f"python test.py {arg}")
+            v()
  
     elif arg in args:
-        os.system(f"python test.py {arg}")
+        args[arg]()
     
     else:
         print(f"TEST : Argument {arg} does not exist")

@@ -10,9 +10,9 @@ from slambot.actuators.servo import Servo
 
 from slambot.tracking.infrared import Line_Tracking
 
-class TestEmulation:
+class TestPhy:
     def __init__(self):
-        self.run()
+        pass
 
     def test_adc(self):
         adc = ADC()
