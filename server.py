@@ -3,14 +3,14 @@ from slambot.camera import VideoCamera
 import time, socket, os, threading
 
 from slambot.actuators.motor import Motor
-from slambot.sensors.ADC import ADC
+from slambot.sensors.adc import ADC
 from slambot.actuators.servo import Servo
 from slambot.sensors.ultrasonic import Ultrasonic
 from slambot.actuators.buzzer import Buzzer
 from slambot.tracking.infrared import Line_Tracking
 from slambot.tracking.line import Follower
 
-from slambot.test.physical import TestPhy
+from slambot.tests.physical import TestPhy
 
 pi_camera = VideoCamera(flip=False)
 app = Flask(__name__)
@@ -30,7 +30,7 @@ thread_states = {
     "line_following_is_active" : False
 }
 
-test = TestPhy()
+_test = TestPhy()
 
 def get_local_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -68,13 +68,13 @@ def video_feed():
 @app.route('/test', methods=['POST'])
 def test():
     args = {
-        'Led':test.test_led,
-        'Motor': test.test_motors,
-        'Ultrasonic': test.test_ultrasonic,
-        'Infrared': test.test_line_tracking,
-        'Servo': test.test_servos,
-        'ADC': tesst.test_adc,
-        'Buzzer': test.test_buzzer
+        'Led':_test.test_led,
+        'Motor': _test.test_motors,
+        'Ultrasonic': _test.test_ultrasonic,
+        'Infrared': _test.test_line_tracking,
+        'Servo': _test.test_servos,
+        'ADC': _test.test_adc,
+        'Buzzer': _test.test_buzzer
     }
     arg = request.form['arg']
     print(f"Testing {arg}")

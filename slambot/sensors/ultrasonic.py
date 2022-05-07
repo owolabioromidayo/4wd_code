@@ -1,15 +1,18 @@
 import time
-from slambot.sensors.motor import Motor
+from slambot.actuators.motor import Motor
 from slambot.sensors.PCA9685 import PCA9685
-from slambot.sensors.servo import Servo
+from slambot.actuators.servo import Servo
 
-try: import RPi.GPIO as GPIO
-except: print("Failed to import RPi.GPIO . Could be runnning in emulation mode.")
+try: 
+    import RPi.GPIO as GPIO
+except: 
+    print("Failed to import RPi.GPIO . Could be runnning in emulation mode.")
 
 
 
 class Ultrasonic:
     def __init__(self, mode=""):
+        self.mode = mode
         if self.mode != "emulate":
             GPIO.setwarnings(False)
             self.trigger_pin = 27

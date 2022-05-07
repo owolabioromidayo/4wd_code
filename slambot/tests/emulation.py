@@ -1,9 +1,9 @@
 import sys, os, time
 
 from slambot.sensors.adc import ADC
-from slambot.sensors.buzzer import Buzzer
+from slambot.actuators.buzzer import Buzzer
 from slambot.sensors.ultrasonic import Ultrasonic
-from slambot.sensors.led import LED
+from slambot.actuators.led import LED
 
 from slambot.actuators.motor import Motor
 from slambot.actuators.servo import Servo

@@ -1,14 +1,17 @@
 import sys, os, time
 
 from slambot.sensors.adc import ADC
-from slambot.sensors.buzzer import Buzzer
+from slambot.actuators.buzzer import Buzzer
 from slambot.sensors.ultrasonic import Ultrasonic
-from slambot.sensors.led import LED
+from slambot.actuators.led import LED
 
 from slambot.actuators.motor import Motor
 from slambot.actuators.servo import Servo
 
 from slambot.tracking.infrared import Line_Tracking
+
+import RPi.GPIO as GPIO
+
 
 class TestPhy:
     def __init__(self):
@@ -74,7 +77,7 @@ class TestPhy:
 
 
     def test_led(self):
-        led = LED("emulate")
+        led = LED()
         try:
             for i in range(3):
                 print ("Chaser animation")
