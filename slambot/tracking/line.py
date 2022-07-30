@@ -32,6 +32,7 @@ class Follower:
 
 
     def loop(self):
+        _break = False
         try:
             self.stream.seek(0)
             image = cv2.imdecode(np.frombuffer(self.stream.read(), np.uint8), 1)
@@ -43,12 +44,14 @@ class Follower:
         except Exception as e:
             print(e)
             print ("End transmit ... " )
-            break
+            _break = True
 
 
     def run(self):
           for _ in self.camera.capture_continuous(self.stream, 'jpeg', use_video_port = True):
-            self.loop()
+            _break = self.loop()
+            if _break:
+                break
 
 
     def run_thread(self, exit_handler):

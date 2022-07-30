@@ -2,7 +2,7 @@ import time
 from slambot.sensors.PCA9685 import PCA9685
 
 class Servo:
-    def __init__(self, mode):
+    def __init__(self, mode=""):
         self.mode = mode
         if self.mode != "emulate":
             self.PwmServo = PCA9685(0x40, debug=True)
@@ -37,7 +37,7 @@ class Servo:
         self.setServoPwm('1',self.vert_ang)
 
     def nudgeHoriz(self, val):
-        print("Moving servo horizontally by {val} degrees.")
+        print(f"Moving servo horizontally by {val} degrees.")
 
         if  50 <= self.horiz_ang + val <= 110:    
             self.horiz_ang += val
@@ -47,7 +47,7 @@ class Servo:
         
 
     def nudgeVert(self, val):
-        print("Moving servo vertically by {val} degrees.")
+        print(f"Moving servo vertically by {val} degrees.")
 
         if 80 <= self.vert_ang + val <= 150:
             self.vert_ang += val

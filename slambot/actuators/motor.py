@@ -72,19 +72,19 @@ class Motor:
         self.right_Lower_Wheel(duty4)
 
 
-    def goForward(self):
+    def goBackwards(self):
         print("Going forward.")
         self.setMotorModel(600,600,600,600)      
 
-    def goBackwards(self):
+    def goForward(self):
         print("Going backwards.")
         self.setMotorModel(-600,-600,-600,-600)      
             
-    def goLeft(self):
+    def goRight(self):
         print("Going left.")
         self.setMotorModel(-1200,-1200,1400,1400)      
             
-    def goRight(self):
+    def goLeft(self):
         print("Going right.")
         self.setMotorModel(1400,1400,-1200,-1200)  
 
