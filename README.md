@@ -11,4 +11,4 @@
  
  
 # Next Steps
- - Implementing Simultaneous Localization and Mapping from scratch as ROS doesnt give me enough control or understanding.
+ - Implementing Monocular Visual SLAM (Simultaneous Localization and Mapping) from scratch as ROS doesnt give me enough control or understanding.
