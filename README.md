@@ -2,6 +2,8 @@
 
 <img src="assets/bot.png?raw=true" />
 
+<img src="assets/ui.png?raw=true" />
+
 # Features
  - RPI 4 + RPI CAM + Infrared + Steerable Head + Ultrasonic. Freenove 4WD Kit.
  - Source code gotten from the kit, gutted and reworked to be more pythonic and interface with my additions.

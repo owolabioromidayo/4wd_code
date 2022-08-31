@@ -12,7 +12,7 @@ body{
     }
 
     .panel-1-left{
-        height: 30%;
+        /* height: 40%;*/
         width: 100%;
         padding: 0;
         margin: 0;
@@ -28,7 +28,7 @@ body{
         
     }
 }
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 900px) {
 
     .panel-1{
         height: 60%;
@@ -40,7 +40,7 @@ body{
     .panel-1-left{
         float: left;
         height: 100%;
-        width: 66%;
+        width: 60%;
         padding: 0;
         margin: 0;
         background-color: white;
@@ -49,7 +49,7 @@ body{
     .panel-1-right{
         position: relative;
         float:left;
-        width: 34%;
+        width: 40%;
         height: 100%;
         padding: 20px 0px 0px 20px;
         border: 2px solid black;
@@ -63,7 +63,6 @@ body{
     width:100%;
     padding: 5% 0 0 0 ;
     margin: 0;
-    border: 2px solid black;
 
 }
 
