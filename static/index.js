@@ -46,13 +46,13 @@ $(document).ready(function(){
 
     });
     }
-
-    window.setInterval(function(){
-        while (1){
-        $.get('/battery_percentage', function(data){
-            $("#battery-percentage").html(data);
-        });
-        }}, 5000);
+	var flag = 1;
+	if (flag ==1){
+		$.get('/battery_percentage', function(data){ 
+			$("#battery-percentage").html(data); 
+		});
+		flag = 0;
+	}
 
     // test endpoints
     postArgOnClick('#testLEDs', '/test', 'Led');

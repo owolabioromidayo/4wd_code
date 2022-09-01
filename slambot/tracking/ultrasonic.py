@@ -1,6 +1,6 @@
 from slambot.sensors.ultrasonic import Ultrasonic
-from salmbot.actuators.motor import Motor
-from salmbot.actuators.servo import Servo
+from slambot.actuators.motor import Motor
+from slambot.actuators.servo import Servo
 
 class UltrasonicTracking:
     def __init__(self, mode):
