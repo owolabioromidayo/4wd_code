@@ -1,13 +1,14 @@
-import cv2
+import cv2, os
+
  
 class YOLOWrapper: 
     def __init__(self):
-        net = cv2.dnn.readNetFromDarknet('yolov4.cfg', 'yolov4.weights')
+        net = cv2.dnn.readNetFromDarknet('/home/pi/slambot/slambot/yolo/yolov4.cfg', '/home/pi/slambot/slambot/yolo/yolov4.weights')
         
         self.model = cv2.dnn_DetectionModel(net)
         self.model.setInputParams(scale=1 / 255, size=(416, 416), swapRB=True)
 
-        with open('coco.names', 'r') as f:
+        with open('/home/pi/slambot/slambot/yolo/coco.names', 'r') as f:
             self.classes = f.read().splitlines()
 
     def get_labelled_image(self, img):
@@ -37,11 +38,12 @@ class YOLOWrapper:
         return None, None    #No person found
 
 
-a = YOLOWrapper()
-im = cv2.imread("./test.jpg")
-im2 = cv2.imread("./test2.png")
+if __name__ == "__main__":
+    a = YOLOWrapper()
+    im = cv2.imread("./test.jpg")
+    im2 = cv2.imread("./test2.png")
 
-print(a.get_person_centroid(im))
-print(a.get_person_centroid(im2))
+    print(a.get_person_centroid(im))
+    print(a.get_person_centroid(im2))
 
  

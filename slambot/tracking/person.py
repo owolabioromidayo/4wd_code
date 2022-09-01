@@ -42,7 +42,6 @@ class PersonFollower:
         except Exception as e:
             print(e)
             print ("End transmit ... " )
-            break
 
 
     def run(self):
@@ -66,7 +65,7 @@ class PersonFollower:
 
     def process_img(self, image):
         cx, cy = self.yolo.get_person_centroid(image)
-        if cx, cy == None, None:
+        if (cx, cy) == (None, None):
             self.PWM.stop()
             return
 

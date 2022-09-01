@@ -63,7 +63,7 @@ class Follower:
 
     @classmethod
     def get_overlay(cls, frame):
-        rgb = image
+        rgb = frame 
         hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
         lower_yellow = np.array([60, 0, 0])
         upper_yellow = np.array([120, 255, 255])
