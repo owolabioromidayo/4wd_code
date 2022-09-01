@@ -6,24 +6,17 @@ from slambot.actuators.motor import Motor
 
 
 class Follower:
-    def __init__(self):
+    def __init__(self, camera):
         #cv2.namedWindow("rgb", 1)
         #cv2.namedWindow("hsv", 1)
         #cv2.namedWindow("masked", 1)
 
-        self.im_width = 1280 
-        self.im_height = 720
-        self.thresh = self.im_width/12
-        self.left_thresh = self.im_width/2 - self.thresh
-        self.right_thresh = self.im_width/2 + self.thresh
+        self.camera = camera
+        self.thresh = self.camera.im_width/12
+        self.left_thresh = self.camera.im_width/2 - self.thresh
+        self.right_thresh = self.camera.im_width/2 + self.thresh
 
         print(f"{self.thresh} {self.left_thresh} {self.right_thresh}")
-        self.camera = picamera.PiCamera(resolution=(self.im_width,self.im_height), framerate = 60 )
-                
-        time.sleep(2)                      
-        self.start = time.time()
-        self.stream = io.BytesIO()
-        print("Camera: ACTIVE ... ")
 
         self.PWM = Motor()
         print("MOtor: CONNECTED...")
@@ -34,12 +27,13 @@ class Follower:
     def loop(self):
         _break = False
         try:
-            self.stream.seek(0)
-            image = cv2.imdecode(np.frombuffer(self.stream.read(), np.uint8), 1)
-            self.process_img(image)
+            # self.stream.seek(0)
+            # image = cv2.imdecode(np.frombuffer(self.stream.read(), np.uint8), 1)
+            # self.process_img(image)
 
-            self.stream.seek(0)
-            self.stream.truncate()
+            # self.stream.seek(0)
+            # self.stream.truncate()
+            self.process_image(cv2.imdecode(np.frombuffer(self.camera.get_frame_matrix(), np.uint8, 1)))
 
         except Exception as e:
             print(e)
@@ -48,14 +42,16 @@ class Follower:
 
 
     def run(self):
-          for _ in self.camera.capture_continuous(self.stream, 'jpeg', use_video_port = True):
+        while True:
+        #   for _ in self.camera.capture_continuous(self.stream, 'jpeg', use_video_port = True):
             _break = self.loop()
             if _break:
                 break
 
 
     def run_thread(self, exit_handler):
-          for _ in self.camera.capture_continuous(self.stream, 'jpeg', use_video_port = True):
+        while True:
+        #   for _ in self.camera.capture_continuous(self.stream, 'jpeg', use_video_port = True):
             if exit_handler.is_set():
                 return
             self.loop()

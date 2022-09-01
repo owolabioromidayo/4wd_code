@@ -7,12 +7,17 @@ from imutils.video.pivideostream import PiVideoStream
 import imutils
 import time
 import numpy as np
+from slambot.tracking.line import Follower
+from slambot.tracking.person import PersonFollower
 
 class VideoCamera(object):
     def __init__(self, flip = False):
-        self.vs = PiVideoStream().start()
+        self.im_width = 1280 
+        self.im_height = 720
+        self.vs = PiVideoStream(resolution=(self.im_width,self.im_height), framerate=30).start()
         self.flip = flip
         time.sleep(2.0)
+        self.mode = "default"
 
     def __del__(self):
         self.vs.stop()
@@ -24,5 +29,18 @@ class VideoCamera(object):
 
     def get_frame(self):
         frame = self.flip_if_needed(self.vs.read())
+
+        if self.mode == "line_following": 
+            frame = Follower.get_overlay(frame)
+
+        elif self.mode == "person_tracking": 
+            frame = PersonFollower.get_overlay(frame)
+
+        else:
+            pass #default, no overlays
         ret, jpeg = cv2.imencode('.jpg', frame)
         return jpeg.tobytes()
+
+    def get_frame_matrix(self):
+        return self.flip_if_needed(self.vs.read())
+

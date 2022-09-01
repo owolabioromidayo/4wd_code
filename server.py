@@ -73,11 +73,13 @@ def exec_ultrasonic_tracking():
 def tracking_handler(thread_state_key, thread_name , fn):
     if thread_states[thread_state_key] == True: #turn it off since its running
         exit_handler.set()
+        pi_camera.mode = "default"
         thread_states[thread_state_key] = False
     else: #turn it on
         exit_handler.set() #disable other tracking routines
 
         thread_states[thread_state_key] = True
+        pi_camera.mode = thread_name
         threads[thread_name] = threading.Thread(target=fn)
         threads[thread_name].start()
         threads[thread_name].join()
@@ -92,11 +94,6 @@ def index():
 def gen(camera):
     while True:
         frame = camera.get_frame()
-        if thread_states["line_following_is_active"]:
-            frame = Follower.get_overlay(frame)
-
-        elif thread_states["person_tracking_is_active"]:
-            frame = PersonFollower.get_overlay(frame)
 
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
