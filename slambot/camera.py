@@ -1,7 +1,3 @@
-#Modified by smartbuilds.io
-#Date: 27.09.20
-#Desc: This scrtipt script..
-
 import cv2
 from imutils.video.pivideostream import PiVideoStream
 import imutils
@@ -18,6 +14,7 @@ class VideoCamera(object):
         self.flip = flip
         time.sleep(2.0)
         self.mode = "default"
+        self.person_follower = PersonFollower()
 
     def __del__(self):
         self.vs.stop()
@@ -34,7 +31,7 @@ class VideoCamera(object):
             frame = Follower.get_overlay(frame)
 
         elif self.mode == "person_tracking": 
-            frame = PersonFollower.get_overlay(frame)
+            frame = self.person_follower.get_overlay(frame)
 
         else:
             pass #default, no overlays

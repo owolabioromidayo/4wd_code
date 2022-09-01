@@ -7,10 +7,6 @@ from slambot.actuators.motor import Motor
 
 class Follower:
     def __init__(self, camera):
-        #cv2.namedWindow("rgb", 1)
-        #cv2.namedWindow("hsv", 1)
-        #cv2.namedWindow("masked", 1)
-
         self.camera = camera
         self.thresh = self.camera.im_width/12
         self.left_thresh = self.camera.im_width/2 - self.thresh
@@ -23,13 +19,6 @@ class Follower:
 
     def loop(self):
         try:
-            # self.stream.seek(0)
-            # image = cv2.imdecode(np.frombuffer(self.stream.read(), np.uint8), 1)
-            # self.process_img(image)
-
-            # self.stream.seek(0)
-            # self.stream.truncate()
-#            self.process_img(cv2.imdecode(np.frombuffer(self.camera.get_frame_matrix(), np.uint8), 1))
             self.process_img(self.camera.get_frame_matrix())
             return 1 
         except Exception as e:
@@ -40,13 +29,11 @@ class Follower:
 
     def run(self):
         while True:
-        #   for _ in self.camera.capture_continuous(self.stream, 'jpeg', use_video_port = True):
             if self.loop() == -1:
                 return
 
     def run_thread(self, exit_handler):
         while True:
-        #   for _ in self.camera.capture_continuous(self.stream, 'jpeg', use_video_port = True):
             if exit_handler.is_set():
                 return
             if self.loop() == -1:
@@ -110,12 +97,6 @@ class Follower:
             else:
                 self.PWM.goRight()
 
-            #self.PWM.setMotorModel(*motor_duties)
-            #print(motor_duties)
-
-        #cv2.imshow("rgb", rgb)
-        #cv2.imshow("hsv", hsv)
-        #cv2.imshow("masked", masked)
         cv2.waitKey(3)
         return 
 

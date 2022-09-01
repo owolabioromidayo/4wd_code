@@ -51,27 +51,22 @@ def get_local_ip():
 def exec_line_tracking(thread_state_key, thread_name, fn):
     # follow black lines
     Line_Tracking().run_thread(exit_handler)
-    tracking_handler(thread_state_key, thread_name, fn) #reset thread state on exit
 
 def exec_line_following(thread_state_key, thread_name, fn):
     #follow yellow line
     Follower(pi_camera).run_thread(exit_handler)
-    tracking_handler(thread_state_key, thread_name, fn) #reset thread state on exit
     
 def exec_person_tracking(thread_state_key, thread_name, fn):
     #follow tracked person
-    PersonFollower().run_thread(exit_handler)
-    tracking_handler(thread_state_key, thread_name, fn) #reset thread state on exit
+    PersonFollower(pi_camera).run_thread(exit_handler)
 
 def exec_light_tracking(thread_state_key, thread_name, fn):
     #follow tracked person
     Light().run_thread(exit_handler)
-    tracking_handler(thread_state_key, thread_name, fn) #reset thread state on exit
 
 def exec_ultrasonic_tracking(thread_state_key, thread_name, fn):
     #follow tracked person
     UltrasonicTracking().run_thread(exit_handler)
-    tracking_handler(thread_state_key, thread_name, fn) #reset thread state on exit
 
 
 
@@ -199,32 +194,37 @@ def buzzer():
 
 @app.route('/line_tracking', methods=['POST'])
 def line_tracking():
-    return tracking_handler("line_tracking_is_active", "line_tracking", 
+    tracking_handler("line_tracking_is_active", "line_tracking", 
         exec_line_tracking)
+    return "OK"
 
 
 @app.route('/line_following', methods=['POST'])
 def line_following():
-    return tracking_handler("line_following_is_active", "line_following", 
+    tracking_handler("line_following_is_active", "line_following", 
         exec_line_following)
         
+    return "OK"
 
 @app.route('/person_tracking', methods=['POST'])
 def person_tracking():
-    return tracking_handler("person_tracking_is_active", "person_tracking", 
+    tracking_handler("person_tracking_is_active", "person_tracking", 
        exec_person_tracking)
+    return "OK"
 
 
 @app.route('/light_tracking', methods=['POST'])
 def light_tracking():
-    return tracking_handler("light_tracking_is_active", "light_tracking", 
+    tracking_handler("light_tracking_is_active", "light_tracking", 
         exec_light_tracking)
+    return "OK"
 
 
 @app.route('/ultrasonic_tracking', methods=['POST'])
 def ultrasonic_tracking():
-    return tracking_handler("ultrasonic_tracking_is_active", "ultrasonic_tracking", 
+    tracking_handler("ultrasonic_tracking_is_active", "ultrasonic_tracking", 
         exec_ultrasonic_tracking)
+    return "OK"
 
 
 
