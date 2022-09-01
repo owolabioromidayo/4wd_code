@@ -14,3 +14,4 @@
  
 # Next Steps
  - Implementing Monocular Visual SLAM (Simultaneous Localization and Mapping) from scratch as ROS doesnt give me enough control or understanding. I'm thinking of writing SLAM but i dont think this robot can carry it. I can set up a stream server from my PC and relay info ( this can also be applied to the YoLo problem), but my internet is too slow for that. 
+<br/> (Might discard this if i find better things to do w/ my time. There are so many impls of SLAM already).
