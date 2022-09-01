@@ -19,13 +19,9 @@ class Follower:
         print(f"{self.thresh} {self.left_thresh} {self.right_thresh}")
 
         self.PWM = Motor()
-        print("MOtor: CONNECTED...")
-    
-        self.run()
 
 
     def loop(self):
-        _break = False
         try:
             # self.stream.seek(0)
             # image = cv2.imdecode(np.frombuffer(self.stream.read(), np.uint8), 1)
@@ -35,26 +31,26 @@ class Follower:
             # self.stream.truncate()
 #            self.process_img(cv2.imdecode(np.frombuffer(self.camera.get_frame_matrix(), np.uint8), 1))
             self.process_img(self.camera.get_frame_matrix())
+            return 1 
         except Exception as e:
             print(e)
             print ("End transmit ... " )
-            _break = True
+            return -1
 
 
     def run(self):
         while True:
         #   for _ in self.camera.capture_continuous(self.stream, 'jpeg', use_video_port = True):
-            _break = self.loop()
-            if _break:
-                break
-
+            if self.loop() == -1:
+                return
 
     def run_thread(self, exit_handler):
         while True:
         #   for _ in self.camera.capture_continuous(self.stream, 'jpeg', use_video_port = True):
             if exit_handler.is_set():
                 return
-            self.loop()
+            if self.loop() == -1:
+                return
             
 
     @classmethod
@@ -101,21 +97,17 @@ class Follower:
         if M['m00'] > 0 :
             cx = int (M['m10']/ M['m00'])
             cy = int (M['m01']/ M['m00'])
-            cv2.circle(rgb, (cx,cy), 20, (0,255,255), -1)
 
             #follow the dot/ publish to cmd_vel
             print(f"CX: {cx}")
 
-            if self.left_thresh<cx<self.right_thresh:
-                print('GOING STRAIGHT')
+            if self.left_thresh< cx <self.right_thresh:
                 self.PWM.goForward()
 
             elif cx <= self.left_thresh:
-                print('GOING LEFT')
                 self.PWM.goLeft()
 
             else:
-                print('GOING RIGHT')
                 self.PWM.goRight()
 
             #self.PWM.setMotorModel(*motor_duties)

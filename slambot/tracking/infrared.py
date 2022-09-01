@@ -13,33 +13,42 @@ class Line_Tracking:
         GPIO.setup(self.IR03,GPIO.IN)
 
     def loop(self):
-        self.LMR=0x00
-        if GPIO.input(self.IR01)==True:
-            self.LMR=(self.LMR | 4)
-        if GPIO.input(self.IR02)==True:
-            self.LMR=(self.LMR | 2)
-        if GPIO.input(self.IR03)==True:
-            self.LMR=(self.LMR | 1)
+        try:
+            self.LMR=0x00
+            if GPIO.input(self.IR01)==True:
+                self.LMR=(self.LMR | 4)
+            if GPIO.input(self.IR02)==True:
+                self.LMR=(self.LMR | 2)
+            if GPIO.input(self.IR03)==True:
+                self.LMR=(self.LMR | 1)
 
-        dispatch = {
-            1: (2500,2500,-1500,-1500),
-            2: (800,800,800,800),
-            3: (4000,4000,-2000,-2000),
-            4: (-1500,-1500,2500,2500),
-            6: (-2000,-2000,4000,4000),
-            7: (0,0,0,0)
-        }
-        PWM.setMotorModel(*dispatch[self.LMR])
+            dispatch = {
+                1: (2500,2500,-1500,-1500),
+                2: (800,800,800,800),
+                3: (4000,4000,-2000,-2000),
+                4: (-1500,-1500,2500,2500),
+                6: (-2000,-2000,4000,4000),
+                7: (0,0,0,0)
+            }
+            PWM.setMotorModel(*dispatch[self.LMR])
+            return 1
+
+        except Exception as e:
+            print(e)
+            print ("End transmit ... " )
+            return -1
 
 
     def run(self):
         while True:
-            self.loop()
+            if self.loop() == -1:
+                return
            
 
     def run_thread(self, exit_handler):        
         while True:
             if exit_handler.is_set():
                 return
-            self.loop()
+            if self.loop() == -1:
+                return
             

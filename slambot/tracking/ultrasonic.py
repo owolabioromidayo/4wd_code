@@ -34,17 +34,25 @@ class UltrasonicTracking:
 
 
     def loop(self):
-        for i in range(30,151,60):
-                self.servo.setServomotor('0',i)
-                time.sleep(0.2)
-                LMR[i] = self.get_distance()
-                self.run_motor(*LMR)
+        try:
+            for i in range(30,151,60):
+                    self.servo.setServomotor('0',i)
+                    time.sleep(0.2)
+                    LMR[i] = self.get_distance()
+                    self.run_motor(*LMR)
+            return 1
+        
+        except Exception as e:
+            print(e)
+            print ("End transmit ... " )
+            return -1
 
 
     def run(self):
         LMR = [0,0,0]
         while True:
-            self.loop(LMR)
+            if self.loop(LMR) == -1:
+                return
             
 
     def run_thread(self, exit_handler):
@@ -54,7 +62,8 @@ class UltrasonicTracking:
                 self.motor.setMotorModel(0,0,0,0)
                 self.servo.setServomotor('0',90)
                 return
-            self.loop(LMR)
+            if self.loop(LMR) == -1:
+                return 
             
         
 

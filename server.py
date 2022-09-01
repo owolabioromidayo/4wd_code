@@ -48,26 +48,30 @@ def get_local_ip():
     return s.getsockname()[0]
 
 
-def exec_line_tracking():
+def exec_line_tracking(thread_state_key, thread_name, fn):
     # follow black lines
     Line_Tracking().run_thread(exit_handler)
+    tracking_handler(thread_state_key, thread_name, fn) #reset thread state on exit
 
-def exec_line_following():
+def exec_line_following(thread_state_key, thread_name, fn):
     #follow yellow line
-    #Follower(pi_camera).run_thread(exit_handler)
-    pass
-
-def exec_person_tracking():
+    Follower(pi_camera).run_thread(exit_handler)
+    tracking_handler(thread_state_key, thread_name, fn) #reset thread state on exit
+    
+def exec_person_tracking(thread_state_key, thread_name, fn):
     #follow tracked person
     PersonFollower().run_thread(exit_handler)
+    tracking_handler(thread_state_key, thread_name, fn) #reset thread state on exit
 
-def exec_light_tracking():
+def exec_light_tracking(thread_state_key, thread_name, fn):
     #follow tracked person
     Light().run_thread(exit_handler)
+    tracking_handler(thread_state_key, thread_name, fn) #reset thread state on exit
 
-def exec_ultrasonic_tracking():
+def exec_ultrasonic_tracking(thread_state_key, thread_name, fn):
     #follow tracked person
     UltrasonicTracking().run_thread(exit_handler)
+    tracking_handler(thread_state_key, thread_name, fn) #reset thread state on exit
 
 
 
@@ -81,7 +85,7 @@ def tracking_handler(thread_state_key, thread_name , fn):
 
         thread_states[thread_state_key] = True
         pi_camera.mode = thread_name
-        threads[thread_name] = threading.Thread(target=fn)
+        threads[thread_name] = threading.Thread(target=fn, args=(thread_state_key, thread_name, fn))
         threads[thread_name].start()
         threads[thread_name].join()
 

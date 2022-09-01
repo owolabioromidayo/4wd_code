@@ -10,27 +10,38 @@ class Light:
 
     def run(self):
         while True:
-                self.loop()
+                if self.loop() == -1:
+                    return
 
     def run_thread(self, exit_handler):
         while True:
             if exit_handler.is_set():
                 return
-            self.loop()
+            if self.loop() == -1:
+                return
 
     def loop(self):
-        L = self.adc.recvADC(0)
-        R = self.adc.recvADC(1)
-        if L < 2.99 and R < 2.99 :
-            self.PWM.goForwards()
+        try:
+            L = self.adc.recvADC(0)
+            R = self.adc.recvADC(1)
+            if L < 2.99 and R < 2.99 :
+                self.PWM.goForwards()
 
-        elif abs(L-R)<0.15:
-            self.PWM.stop()
-            
-        elif L > 3 or R > 3:
-            if L > R :
-                self.PWM.goLeft()
+            elif abs(L-R)<0.15:
+                self.PWM.stop()
                 
-            elif R > L :
-                self.PWM.goRight()
+            elif L > 3 or R > 3:
+                if L > R :
+                    self.PWM.goLeft()
+                    
+                elif R > L :
+                    self.PWM.goRight()
+
+            return 1
+
+        except Exception as e:
+            print(e)
+            print ("End transmit ... " )
+            return -1
+
 

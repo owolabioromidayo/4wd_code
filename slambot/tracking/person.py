@@ -7,60 +7,59 @@ from slambot.yolo.yolo import YOLOWrapper
 
 
 class PersonFollower:
-    def __init__(self):
+    def __init__(self, camera):
 
-        self.im_width = 1280 
-        self.im_height = 720
-        self.thresh = self.im_width/12
-        self.left_thresh = self.im_width/2 - self.thresh
-        self.right_thresh = self.im_width/2 + self.thresh
+        self.camera = camera
+        self.thresh = self.camera.im_width/12
+        self.left_thresh = self.camera.im_width/2 - self.thresh
+        self.right_thresh = self.camera.im_width/2 + self.thresh
         self.yolo = YOLOWrapper()
 
         print(f"{self.thresh} {self.left_thresh} {self.right_thresh}")
-        self.camera = picamera.PiCamera(resolution=(self.im_width,self.im_height), framerate = 60 )
-                
-        time.sleep(2)                      
-        self.start = time.time()
-        self.stream = io.BytesIO()
-        print("Camera: ACTIVE ... ")
 
         self.PWM = Motor()
-        print("MOtor: CONNECTED...")
     
-        self.run()
 
 
     def loop(self):
         try:
-            self.stream.seek(0)
-            image = cv2.imdecode(np.frombuffer(self.stream.read(), np.uint8), 1)
-            self.process_img(image)
+            # self.stream.seek(0)
+            # image = cv2.imdecode(np.frombuffer(self.stream.read(), np.uint8), 1)
+            # self.process_img(image)
 
-            self.stream.seek(0)
-            self.stream.truncate()
+            # self.stream.seek(0)
+            # self.stream.truncate()
+
+            self.process_img(self.camera.get_frame_matrix())
+            return 1 
 
         except Exception as e:
             print(e)
             print ("End transmit ... " )
+            return -1
 
 
     def run(self):
-          for _ in self.camera.capture_continuous(self.stream, 'jpeg', use_video_port = True):
-            self.loop()
+        while True:
+        #   for _ in self.camera.capture_continuous(self.stream, 'jpeg', use_video_port = True):
+            if self.loop() == -1:
+                return
 
 
     def run_thread(self, exit_handler):
-          for _ in self.camera.capture_continuous(self.stream, 'jpeg', use_video_port = True):
+        while True:
+        #   for _ in self.camera.capture_continuous(self.stream, 'jpeg', use_video_port = True):
             if exit_handler.is_set():
                 return
-            self.loop()
+            if self.loop() == -1:
+                return
 
 
 
     @classmethod
     def get_overlay(cls, frame):
         cx, cy = self.yolo.get_person_centroid(frame)
-        cv2.circle(frame, (cx,cy), 20, (255,0,255), -1)
+        frame = cv2.circle(frame, (cx,cy), 20, (0,255,0), -1)
         return frame
 
     def process_img(self, image):
