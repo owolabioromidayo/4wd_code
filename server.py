@@ -54,7 +54,8 @@ def exec_line_tracking():
 
 def exec_line_following():
     #follow yellow line
-    Follower().run_thread(exit_handler)
+    #Follower(pi_camera).run_thread(exit_handler)
+    pass
 
 def exec_person_tracking():
     #follow tracked person

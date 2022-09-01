@@ -33,8 +33,8 @@ class Follower:
 
             # self.stream.seek(0)
             # self.stream.truncate()
-            self.process_image(cv2.imdecode(np.frombuffer(self.camera.get_frame_matrix(), np.uint8, 1)))
-
+#            self.process_img(cv2.imdecode(np.frombuffer(self.camera.get_frame_matrix(), np.uint8), 1))
+            self.process_img(self.camera.get_frame_matrix())
         except Exception as e:
             print(e)
             print ("End transmit ... " )
@@ -60,13 +60,13 @@ class Follower:
     @classmethod
     def get_overlay(cls, frame):
         rgb = frame 
-        hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+        hsv = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)
         lower_yellow = np.array([60, 0, 0])
         upper_yellow = np.array([120, 255, 255])
         mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
 
         #computing moments
-        h,w,d = image.shape
+        h,w,d = frame.shape
         search_top = int(3*h/4)
         search_bot = search_top + 20
         mask[0:search_top, 0:w] = 0
@@ -76,7 +76,7 @@ class Follower:
         if M['m00'] > 0 :
             cx = int (M['m10']/ M['m00'])
             cy = int (M['m01']/ M['m00'])
-            cv2.circle(rgb, (cx,cy), 20, (0,255,255), -1)
+            rgb = cv2.circle(rgb, (cx,cy), 20, (0,255,255), -1)
 
         return rgb
 
@@ -118,8 +118,8 @@ class Follower:
                 print('GOING RIGHT')
                 self.PWM.goRight()
 
-            self.PWM.setMotorModel(*motor_duties)
-            print(motor_duties)
+            #self.PWM.setMotorModel(*motor_duties)
+            #print(motor_duties)
 
         #cv2.imshow("rgb", rgb)
         #cv2.imshow("hsv", hsv)

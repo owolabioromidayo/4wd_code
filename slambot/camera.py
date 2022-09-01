@@ -12,8 +12,8 @@ from slambot.tracking.person import PersonFollower
 
 class VideoCamera(object):
     def __init__(self, flip = False):
-        self.im_width = 1280 
-        self.im_height = 720
+        self.im_width =600
+        self.im_height = 400
         self.vs = PiVideoStream(resolution=(self.im_width,self.im_height), framerate=30).start()
         self.flip = flip
         time.sleep(2.0)
