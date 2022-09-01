@@ -56,6 +56,14 @@ class PersonFollower:
                 return
             self.loop()
 
+
+
+    @classmethod
+    def get_overlay(cls, frame):
+        cx, cy = self.yolo.get_person_centroid(frame)
+        cv2.circle(frame, (cx,cy), 20, (255,0,255), -1)
+        return frame
+
     def process_img(self, image):
         cx, cy = self.yolo.get_person_centroid(image)
         if cx, cy == None, None:

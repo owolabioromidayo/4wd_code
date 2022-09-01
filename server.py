@@ -9,11 +9,18 @@ from slambot.sensors.ultrasonic import Ultrasonic
 from slambot.actuators.buzzer import Buzzer
 from slambot.tracking.infrared import Line_Tracking
 from slambot.tracking.line import Follower
+from slambot.tracking.person import PersonFollower
+from slambot.tracking.light import Light
+from slambot.tracking.ultrasonic import UltrasonicTracking
 
 from slambot.tests.physical import TestPhy
 
 pi_camera = VideoCamera(flip=False)
 app = Flask(__name__)
+
+
+CURR_MODE = "DEFAULT"
+
 
 PWM = Motor()
 adc = ADC()
@@ -27,6 +34,9 @@ exit_handler = threading.Event()
 threads = {}
 thread_states = {
     "line_tracking_is_active" : False,
+    "person_tracking_is_active" : False,
+    "light_tracking_is_active" : False,
+    "ultrasonic_tracking_is_active" : False,
     "line_following_is_active" : False
 }
 
@@ -40,13 +50,39 @@ def get_local_ip():
 
 def exec_line_tracking():
     # follow black lines
-    infrared = Line_Tracking()
-    infrared.run_thread(exit_handler)
+    Line_Tracking().run_thread(exit_handler)
 
 def exec_line_following():
     #follow yellow line
-    follower = Follower()
-    follower.run_thread(exit_handler)
+    Follower().run_thread(exit_handler)
+
+def exec_person_tracking():
+    #follow tracked person
+    PersonFollower().run_thread(exit_handler)
+
+def exec_light_tracking():
+    #follow tracked person
+    Light().run_thread(exit_handler)
+
+def exec_ultrasonic_tracking():
+    #follow tracked person
+    UltrasonicTracking().run_thread(exit_handler)
+
+
+
+def tracking_handler(thread_state_key, thread_name , fn):
+    if thread_states[thread_state_key] == True: #turn it off since its running
+        exit_handler.set()
+        thread_states[thread_state_key] = False
+    else: #turn it on
+        exit_handler.set() #disable other tracking routines
+
+        thread_states[thread_state_key] = True
+        threads[thread_name] = threading.Thread(target=fn)
+        threads[thread_name].start()
+        threads[thread_name].join()
+
+
 
 
 @app.route('/')
@@ -56,6 +92,12 @@ def index():
 def gen(camera):
     while True:
         frame = camera.get_frame()
+        if thread_states["line_following_is_active"]:
+            frame = Follower.get_overlay(frame)
+
+        elif thread_states["person_tracking_is_active"]:
+            frame = PersonFollower.get_overlay(frame)
+
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
@@ -155,48 +197,33 @@ def buzzer():
 
 @app.route('/line_tracking', methods=['POST'])
 def line_tracking():
-    arg = request.form['arg']
-    if arg == 'START':
-        if not thread_states["line_tracking_is_active"]:
-            thread_states["line_tracking_is_active"] = True
-
-            threads["line_tracking"] = threading.Thread(target=exec_line_tracking)
-            threads['line_tracking'].start()
-            threads['line_tracking'].join()
-        else:
-            print("already active")
-            return "Error: service already running"
-    elif arg == 'STOP':
-        exit_handler.set()
-        thread_states['line_tracking_is_active'] = False
-    
-    else:
-        print(f"Error: Argument: {arg} does not exist")
-        return f"Error: Argument: {arg} does not exist"
-        
+    return tracking_handler("line_tracking_is_active", "line_tracking", 
+        exec_line_tracking)
 
 
 @app.route('/line_following', methods=['POST'])
 def line_following():
-    arg = request.form['arg']
-    if arg == 'START':
-        if not thread_states["line_following_is_active"]:
-            thread_states["line_following_is_active"] = True
-
-            threads["line_following"] = threading.Thread(target=exec_line_following)
-            threads['line_following'].start()
-            threads['line_following'].join()
-        else:
-            print("already active")
-            return "Error: service already running"
-    elif arg == 'STOP':
-        exit_handler.set()
-        thread_states['line_following_is_active'] = False
-    
-    else:
-        print(f"Error: Argument: {arg} does not exist")
-        return f"Error: Argument: {arg} does not exist"
+    return tracking_handler("line_following_is_active", "line_following", 
+        exec_line_following)
         
+
+@app.route('/person_tracking', methods=['POST'])
+def person_tracking():
+    return tracking_handler("person_tracking_is_active", "person_tracking", 
+       exec_person_tracking)
+
+
+@app.route('/light_tracking', methods=['POST'])
+def light_tracking():
+    return tracking_handler("light_tracking_is_active", "light_tracking", 
+        exec_light_tracking)
+
+
+@app.route('/ultrasonic_tracking', methods=['POST'])
+def ultrasonic_tracking():
+    return tracking_handler("ultrasonic_tracking_is_active", "ultrasonic_tracking", 
+        exec_ultrasonic_tracking)
+
 
 
 if __name__ == '__main__':

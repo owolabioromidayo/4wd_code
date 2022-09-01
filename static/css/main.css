@@ -240,3 +240,7 @@ body{
     margin: 5% 0% 5% 5%;
     padding:
 } */
+
+#battery-percentage{
+    color: green
+}

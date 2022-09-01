@@ -61,6 +61,29 @@ class Follower:
             self.loop()
             
 
+    @classmethod
+    def get_overlay(cls, frame):
+        rgb = image
+        hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+        lower_yellow = np.array([60, 0, 0])
+        upper_yellow = np.array([120, 255, 255])
+        mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
+
+        #computing moments
+        h,w,d = image.shape
+        search_top = int(3*h/4)
+        search_bot = search_top + 20
+        mask[0:search_top, 0:w] = 0
+        mask[search_bot:h, 0:w] = 0
+
+        M = cv2.moments(mask)
+        if M['m00'] > 0 :
+            cx = int (M['m10']/ M['m00'])
+            cy = int (M['m01']/ M['m00'])
+            cv2.circle(rgb, (cx,cy), 20, (0,255,255), -1)
+
+        return rgb
+
 
     def process_img(self, image):
         #color filtering

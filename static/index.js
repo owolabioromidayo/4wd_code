@@ -11,9 +11,15 @@ $(document).ready(function(){
 
     })
 
-    var postArgOnClick = function(selector,endpoint, arg){
+    var postArgOnClick = function(selector, endpoint, arg){
     return $(selector).click(function(){
         $.post(endpoint, {arg})
+    })
+    } 
+
+    var postOnClick = function(selector,endpoint){
+    return $(selector).click(function(){
+        $.post(endpoint, {})
     })
     } 
 
@@ -41,7 +47,12 @@ $(document).ready(function(){
     });
     }
 
-
+    window.setInterval(function(){
+        while (1){
+        $.get('/battery_percentage', function(data){
+            $("#battery-percentage").html(data);
+        });
+        }}, 5000);
 
     // test endpoints
     postArgOnClick('#testLEDs', '/test', 'Led');
@@ -51,7 +62,13 @@ $(document).ready(function(){
     postArgOnClick('#testServo', '/test', 'Servo');
     postArgOnClick('#testADC', '/test', 'ADC');
     postArgOnClick('#testBuzzer', '/test', 'Buzzer');
+    postArgOnClick('#testAll', '/test', 'ALL');
 
+    postOnClick("#line-tracking-btn", "/line_tracking");
+    postOnClick("#line-following-btn", "/line_following");
+    postOnClick("#person-tracking-btn", "/person_tracking");
+    postOnClick("#ultrasonic-tracking-btn", "/ultrasonic_tracking");
+    postOnClick("#light-tracking-btn", "/light_tracking");
 
     moveMotorOnPress("#motor-forward-btn", "FORWARD");
     moveMotorOnPress("#motor-backwards-btn", "BACKWARDS");
